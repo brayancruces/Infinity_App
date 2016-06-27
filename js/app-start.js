@@ -2,7 +2,7 @@
  * app-start.js
  *
  * Author: Brayan Cruces, Diego Jara
- * 
+ *
  * Project: Magical Hasse Flow v1
  *
  * JS de inicialización de Framework7
@@ -39,7 +39,7 @@ $$(document).on('ajaxComplete', function () {
 
 
 
-/* PANELES */ 
+/* PANELES */
 
 
 
@@ -77,7 +77,7 @@ var myPickerElements = myApp.picker({
        }
      ],
     toolbarCloseText:'Listo'
-});   
+});
 
 var myPickerRelacion = myApp.picker({
     input: '#picker-relacion',
@@ -87,7 +87,12 @@ var myPickerRelacion = myApp.picker({
        }
      ],
     toolbarCloseText:'Listo'
-});   
+});
 
 
+// Sliders
 
+var mySwiper = app.swiper('.swiper-container', {
+    speed: 400,
+    spaceBetween: 100
+});
