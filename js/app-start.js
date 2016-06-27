@@ -92,7 +92,7 @@ var myPickerRelacion = myApp.picker({
 
 // Sliders
 
-var mySwiper = app.swiper('.swiper-container', {
+var mySwiper = myApp.swiper('.swiper-container', {
     speed: 400,
     spaceBetween: 100
 });
