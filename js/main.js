@@ -691,7 +691,7 @@ $(document).ready(function(){
 
 
         GenerarElementos(random,relacion);
-        $("#text_Elementos").fadeIn('slow');
+        setTimeout(function() {    $("#text_Elementos").fadeIn('slow');
 
 
 
@@ -704,7 +704,7 @@ $(document).ready(function(){
         $("#n_selected").html("<b>N:</b> "+cant_elementos);
         $("#n_selected").fadeIn('slow');
 
-
+        }, 5000);
         // Check tipo
         if  ($( "#id-tipo-relacion" ).val() === '1'){  relacion.tipo = 'MayorA';}
         else if($( "#id-tipo-relacion" ).val() === '2'){  relacion.tipo = 'MenorA';}
@@ -725,6 +725,7 @@ $(document).ready(function(){
         var boolCiclo = relacion.getCiclo();
         var boolConectado = relacion.getConectado();
 
+        setTimeout(function() {
         // Imprimir Identificadores (Reflexividad, Simetria, etc)
         var target_identifi = 'ul#bloque_identificadores';
         $(target_identifi).html("");
@@ -736,7 +737,7 @@ $(document).ready(function(){
         // $(target_identifi).append("<li> <b>Es Transitiva:</b> "+ boolTransitiva+"</li>");
         $(target_identifi).append("<li> <b>¿Contiene un ciclo?:</b> "+ boolCiclo+"</li>");
         $(target_identifi).append("<li> <b>¿Está conectado?:</b> "+ boolConectado+"</li>");
-
+        },5000);
 
 
 
@@ -754,9 +755,8 @@ $(document).ready(function(){
 
 
         //Notacion
+        setTimeout(function() {
         $("#idNotacion").html("");
-
-
         $("#idNotacion").html(relacion.getNotacionConjuntos());
 
 
@@ -782,6 +782,8 @@ $(document).ready(function(){
           }
 
         });
+
+        },5000);
 
       }
     );
