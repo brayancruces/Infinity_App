@@ -171,7 +171,6 @@ function GenerarElementos (pNumero, pRelacion)
 
                    $(lista).append(i + ", ");
 
-
                     pRelacion.dominio.push(new Nodo(i));
 
             }
@@ -200,6 +199,8 @@ function Relacion2D()
   this.esAsimetrica;
     this.esAntisimetrica;
     this.esTransitiva;
+  this.esCiclo;
+  this.esConectado;
 
   this.tipo;
   this.alto;
@@ -423,6 +424,28 @@ function Relacion2D()
         this.esTransitiva = true;
 
         if(this.esTransitiva)
+        return "Sí.";
+        else
+        return "No.";
+    }
+
+
+    this.getCiclo = function()
+    {
+        this.esCiclo = true;
+
+        if(this.esCiclo)
+        return "Sí.";
+        else
+        return "No.";
+    }
+
+
+    this.getConectado = function()
+    {
+        this.esConectado = true;
+
+        if(this.esCiclo)
         return "Si.";
         else
         return "No.";
@@ -430,30 +453,30 @@ function Relacion2D()
 
     this.getMatriz = function()
     {
-        for (var i = 0; i < this.dominio.length; i++)
-    {
-      this.matriz[i] = [];
-    }
+      for (var i = 0; i < this.dominio.length; i++)
+      {
+        this.matriz[i] = [];
+      }
 
-    var a;
-    var b;
-    var A;
-    var B;
+      var a;
+      var b;
+      var A;
+      var B;
 
-    for (var i = 0; i < this.dominio.length; i++)
-    {
-      b = this.dominio[i];
+      for (var i = 0; i < this.dominio.length; i++)
+      {
+        b = this.dominio[i];
 
-      for (var j = 0; j < this.dominio.length; j++)
-            {
-                a = this.dominio[j];
+        for (var j = 0; j < this.dominio.length; j++)
+        {
+          a = this.dominio[j];
 
-                if(this.r(a.valor, b.valor))
-                    this.matriz[i][j] = 1;
-                else
-                    this.matriz[i][j] = 0;
-            }
-    }
+          if(this.r(a.valor, b.valor))
+          this.matriz[i][j] = 1;
+          else
+          this.matriz[i][j] = 0;
+        }
+      }
     };
 
   this.goHasse = function()
@@ -546,6 +569,9 @@ function Relacion2D()
 
   };
 
+
+  // Generación del conjunto (Para Imprimir)
+
   this.getNotacionConjuntos = function()
   {
     var notacion;
@@ -554,22 +580,26 @@ function Relacion2D()
 
     notacion = "<b>R</b> = { ";
 
+
+
+    console.log(this.dominio.length);
+
     for (var i = 0; i < this.dominio.length; i++)
-            {
-                for (var j = 0; j < this.dominio.length; j++)
-                {
-                    if (this.matriz[i][j].tipo !== TipoParOrdenado.Null)
-                    {
-                        a = this.matriz[i][j].a.valor;
-                        b = this.matriz[i][j].b.valor;
+    {
+      for (var j = 0; j < this.dominio.length; j++)
+      {
+        if (this.matriz[i][j].tipo !== TipoParOrdenado.Null)
+        {
+          a = this.matriz[i][j].a.valor;
+          b = this.matriz[i][j].b.valor;
 
-                        notacion += "(" + a + "," + b + ")";
+          notacion += "(" + a + "," + b + ")";
 
-                        //if(i  < this.dominio.length-1)
-                        notacion += " ; ";
-                    }
-          }
-            }
+          //if(i  < this.dominio.length-1)
+          notacion += " ; ";
+        }
+      }
+    }
 
             notacion.slice(0,-3);
             notacion += " }";
@@ -692,15 +722,24 @@ $(document).ready(function(){
         var boolAntisimetrica = relacion.getAntimetria();
         var boolTransitiva = relacion.getTransitiva();
 
+        var boolCiclo = relacion.getCiclo();
+        var boolConectado = relacion.getConectado();
+
         // Imprimir Identificadores (Reflexividad, Simetria, etc)
         var target_identifi = 'ul#bloque_identificadores';
         $(target_identifi).html("");
-        $(target_identifi).append("<li> <b>Es Reflexiva:</b> "+ boolReflexiva+"</li>");
-        $(target_identifi).append("<li> <b>Es Irreflexiva:</b> "+ boolIrreflexiva+"</li>");
-        $(target_identifi).append("<li> <b>Es Simétrica:</b> "+ boolSimetrica +"</li>");
-        $(target_identifi).append("<li> <b>Es Asimetrica:</b> "+ boolAsimetrica+"</li>");
-        $(target_identifi).append("<li> <b>Es Antisimetrica:</b> "+ boolAntisimetrica+"</li>");
-        $(target_identifi).append("<li> <b>Es Transitiva:</b> "+ boolTransitiva+"</li>");
+        // $(target_identifi).append("<li> <b>Es Reflexiva:</b> "+ boolReflexiva+"</li>");
+        // $(target_identifi).append("<li> <b>Es Irreflexiva:</b> "+ boolIrreflexiva+"</li>");
+        // $(target_identifi).append("<li> <b>Es Simétrica:</b> "+ boolSimetrica +"</li>");
+        // $(target_identifi).append("<li> <b>Es Asimetrica:</b> "+ boolAsimetrica+"</li>");
+        // $(target_identifi).append("<li> <b>Es Antisimetrica:</b> "+ boolAntisimetrica+"</li>");
+        // $(target_identifi).append("<li> <b>Es Transitiva:</b> "+ boolTransitiva+"</li>");
+        $(target_identifi).append("<li> <b>¿Contiene un ciclo?:</b> "+ boolCiclo+"</li>");
+        $(target_identifi).append("<li> <b>¿Está conectado?:</b> "+ boolConectado+"</li>");
+
+
+
+
 
         //  if(relacion.esReflexiva && relacion.esSimetrica && relacion.esTransitiva)
         // {
@@ -719,6 +758,7 @@ $(document).ready(function(){
 
 
         $("#idNotacion").html(relacion.getNotacionConjuntos());
+
 
         //Antisimetricas
         $("#idAntisimetricas").html("");
