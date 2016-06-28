@@ -88,11 +88,3 @@ var myPickerRelacion = myApp.picker({
      ],
     toolbarCloseText:'Listo'
 });
-
-
-// Sliders
-
-var mySwiper = myApp.swiper('.swiper-container', {
-    speed: 400,
-    spaceBetween: 100
-});
