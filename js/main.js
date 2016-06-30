@@ -741,8 +741,6 @@ function printmatrix(matrix,element_id) {
 
 // Imprimir Conjunto en extension (tomar matriz booleana)
 
-
-
 function generateDotNetwork(matrix, vector) {
 
      var dotnetwork = "dinetwork {";
@@ -783,6 +781,41 @@ function generateDotNetwork(matrix, vector) {
 
     return dotnetwork;
 }
+
+function generateConjuntoExtension(matrix, vector) {
+
+     var relacion = "R= {";
+
+
+     //  Relaciones
+
+        for (var i = 0; i < matrix.length; i++) {
+
+          for (var j = 0; j < matrix[i].length; j++) {
+              if(matrix[i][j]==1){
+
+                relacion += '(';
+                relacion += i +1;
+                relacion += ',';
+                relacion += j+1;
+                relacion += ')';
+                relacion +=";"
+              }
+
+          }
+
+      }
+
+
+
+
+
+    relacion += "}";
+
+
+    return relacion;
+}
+
 
 /************** FIN NUEVAS FUNCIONES ****************************************/
 
@@ -874,17 +907,19 @@ $(document).ready(function(){
 
 
 
-        //Notacion
-
-        $("#idNotacion").html("");
-        $("#idNotacion").html(relacion.getNotacionConjuntos());
-
 
 
         /*  NEW CODE */
 
         var myVector = Array.vector(cant_elementos);
         var my2Darray = Array.matrix(cant_elementos,cant_elementos);
+
+
+        // Conjunto extension
+        var ConjuntoExtension = generateConjuntoExtension(my2Darray, myVector);
+
+        $("#idNotacion").html("");
+        $("#idNotacion").html(ConjuntoExtension);
 
         //Matriz booleana
         printmatrix(my2Darray,"idMatriz");
