@@ -669,11 +669,41 @@ function Relacion2D()
 
 
 /* HELPERS  */
-//Generate Aleatorio
+// Generate Aleatorio
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
+// Multiplicar matrices
+function multiplyMatrices(m1, m2) {
+    var result = [];
+    for (var i = 0; i < m1.length; i++) {
+        result[i] = [];
+        for (var j = 0; j < m2[0].length; j++) {
+            var sum = 0;
+            for (var k = 0; k < m1[0].length; k++) {
+                sum += m1[i][k] * m2[k][j];
+            }
+            result[i][j] = sum;
+        }
+    }
+    return result;
+}
+
+// Contar items en un array (repetidos)
+
+function countElements(myArray) {
+
+    var itemCount = {};
+
+    myArray.forEach(function(value){
+        if(value in itemCount) itemCount[value] = itemCount[value] + 1;
+        else itemCount[value] = 1;
+    });
+
+    return itemCount;
+
+}
 /* MAIN */
 
 // Generar los elementos del vector (1 hasta N)
@@ -789,7 +819,7 @@ function generateConjuntoExtension(matrix, vector) {
 
      //  Relaciones
 
-        for (var i = 0; i < matrix.length; i++) {
+      for (var i = 0; i < matrix.length; i++) {
 
           for (var j = 0; j < matrix[i].length; j++) {
               if(matrix[i][j]==1){
@@ -799,7 +829,7 @@ function generateConjuntoExtension(matrix, vector) {
                 relacion += ',';
                 relacion += j+1;
                 relacion += ')';
-                relacion +=";"
+                relacion +="; "
               }
 
           }
@@ -807,13 +837,99 @@ function generateConjuntoExtension(matrix, vector) {
       }
 
 
-
-
-
     relacion += "}";
 
 
     return relacion;
+}
+
+
+
+function checkTransitividad(matrix)
+{
+  var k=0;
+  var t=0;
+  for( var i = 0; matrix.length;i++){
+    if( matrix[i][k]==1){
+      t=k;
+      for(var j=0; matrix.length;j++){
+        if( matrix[t][j]==1){
+          if(j=i){
+            return true;
+            //return "Sí";
+          }
+          t=j;
+          j=1;
+        }
+      }
+      k++;
+    }
+  }
+  return false;
+  //return "No están todos conectados.";
+}
+
+
+function checkConectados(matrix)
+{
+
+
+  var arr1 = [];
+  var arr2 = [];
+
+  var identificador;
+  // Verificacion por filas (si existen full 0s)
+  for (var i = 0; i < matrix.length; i++) {
+
+      identificador = 1;
+      for (var j = 0; j < matrix[i].length; j++) {
+
+          if(matrix[i][j]==1){
+            identificador = 0;
+          }
+
+      }
+      // Full zeros en esta fila
+      if(identificador==1) {arr1.push(i+1);}
+
+  }
+
+
+
+  // Verificacion por columnas (si existen full 0s)
+  for (var i = 0; i < matrix.length; i++) {
+
+      identificador = 1;
+      for (var j = 0; j < matrix[i].length; j++) {
+
+          if(matrix[j][i]==1){
+            identificador = 0;
+          }
+
+      }
+      // Full zeros en esta columna
+      if(identificador==1) {arr2.push(i+1);}
+
+  }
+
+  console.log(arr1);
+  console.log(arr2);
+
+
+  // Concatenar resultados y chequear coincidencias
+  var arrFinal = arr1.concat(arr2);
+  var objElementos = countElements(arrFinal);
+
+  console.log(objElementos);
+
+  for (var item in objElementos) {
+    if(objElementos[item] > 1){
+    return false;
+    }
+  }
+
+  return true;
+
 }
 
 
@@ -891,7 +1007,7 @@ $(document).ready(function(){
         // $(target_identifi).append("<li> <b>Es Antisimetrica:</b> "+ boolAntisimetrica+"</li>");
         // $(target_identifi).append("<li> <b>Es Transitiva:</b> "+ boolTransitiva+"</li>");
         $(target_identifi).append("<li> <b>¿Contiene un ciclo?:</b> "+ boolCiclo+"</li>");
-        $(target_identifi).append("<li> <b>¿Está conectado?:</b> "+ boolConectado+"</li>");
+        //$(target_identifi).append("<li> <b>¿Está conectado?:</b> "+ boolConectado+"</li>");
 
 
 
@@ -920,6 +1036,15 @@ $(document).ready(function(){
 
         $("#idNotacion").html("");
         $("#idNotacion").html(ConjuntoExtension);
+
+
+        // ¿Conectados?
+        var boolConectados = checkConectados(my2Darray);
+        var msg_conectado = (boolConectados) ? "Sí, está conectado." : "No, hay elementos aislados :/.";
+
+        $(target_identifi).append("<li> <b>¿Está conectado?:</b> "+ msg_conectado+"</li>");
+
+
 
         //Matriz booleana
         printmatrix(my2Darray,"idMatriz");
