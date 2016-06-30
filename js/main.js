@@ -665,6 +665,126 @@ function Relacion2D()
 // }
 
 
+/************** NUEVAS FUNCIONES ********************************************/
+
+
+/* HELPERS  */
+//Generate Aleatorio
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+/* MAIN */
+
+// Generar los elementos del vector (1 hasta N)
+
+Array.vector = function(n){
+   var arr = [];
+    for(var i = 0; i < n; i++){
+         arr[i]=i+1;
+    }
+    return arr;
+}
+
+// Generar Matriz (con relaciones)
+Array.matrix = function(numrows, numcols){
+   var arr = [];
+   var contador = 0; //Para no sobrepasarse del 2n
+   var max= numcols*2;
+
+   for (var i = 0; i < numrows; ++i){
+      var columns = [];
+      for (var j = 0; j < numcols; ++j){
+         var valRelleno = getRandomInt(0, 2);
+         // Ahora el relleno de 0 o 1
+         if(valRelleno==1 && contador<max){
+            columns[j] = valRelleno;
+            contador++;
+            }
+         else if(valRelleno==1 && contador>=max)
+         {columns[j] = 0;}
+         else{columns[j] = 0}
+
+
+      }
+
+      arr[i] = columns;
+
+
+    }
+    return arr;
+}
+
+// Imprimir Matriz Booleana
+function printmatrix(matrix,element_id) {
+
+      $("#"+ element_id).html(" ");
+
+      // Imprimir letrero de numeros superior
+      $("#"+element_id).append("0 ");
+      for (var i = 0; i < matrix.length; i++) {
+        $("#"+element_id).append("<b>"+(i+1)+"</b> ");
+      }
+      $("#"+element_id).append("<br>");
+
+      //Print matriz
+      for (var i = 0; i < matrix.length; i++) {
+        $("#"+element_id).append("<b>"+(i+1)+"</b> ");
+        for (var j = 0; j < matrix[i].length; j++) {
+
+            $("#"+element_id).append(matrix[i][j] + " ");
+
+        }
+        $("#"+element_id).append("<br>");
+      }
+}
+
+// Imprimir Conjunto en extension (tomar matriz booleana)
+
+
+
+function generateDotNetwork(matrix, vector) {
+
+     var dotnetwork = "dinetwork {";
+
+     var relaciones="";
+     // 1- Solo nodos
+     for (var i = 0; i < vector.length; i++) {
+       dotnetwork += vector[i];
+       dotnetwork +=";"
+     }
+
+
+     // 2- Relaciones
+
+        for (var i = 0; i < matrix.length; i++) {
+
+          for (var j = 0; j < matrix[i].length; j++) {
+              if(matrix[i][j]==1){
+
+                dotnetwork += i +1;
+                dotnetwork += '->';
+                dotnetwork += j+1;
+
+                dotnetwork +=";"
+              }
+
+          }
+
+      }
+
+
+
+
+
+    dotnetwork += "}";
+  //  dotnetwork = "dinetwork {1->1;7;4;1-> 2; 2 -> 3; 2 -> 4; 2 -> 1 }";
+
+
+    return dotnetwork;
+}
+
+/************** FIN NUEVAS FUNCIONES ****************************************/
 
 
 // Manipulacion DOM con jQuery
@@ -680,6 +800,8 @@ $(document).ready(function(){
       function()
       {
 
+        setTimeout(function() {
+
         var relacion = new Relacion2D();
         var min = intMin;
         var max = intMax;
@@ -691,7 +813,7 @@ $(document).ready(function(){
 
 
         GenerarElementos(random,relacion);
-        setTimeout(function() {    $("#text_Elementos").fadeIn('slow');
+         $("#text_Elementos").fadeIn('slow');
 
 
 
@@ -704,7 +826,7 @@ $(document).ready(function(){
         $("#n_selected").html("<b>N:</b> "+cant_elementos);
         $("#n_selected").fadeIn('slow');
 
-        }, 5000);
+
         // Check tipo
         if  ($( "#id-tipo-relacion" ).val() === '1'){  relacion.tipo = 'MayorA';}
         else if($( "#id-tipo-relacion" ).val() === '2'){  relacion.tipo = 'MenorA';}
@@ -725,7 +847,7 @@ $(document).ready(function(){
         var boolCiclo = relacion.getCiclo();
         var boolConectado = relacion.getConectado();
 
-        setTimeout(function() {
+
         // Imprimir Identificadores (Reflexividad, Simetria, etc)
         var target_identifi = 'ul#bloque_identificadores';
         $(target_identifi).html("");
@@ -737,8 +859,6 @@ $(document).ready(function(){
         // $(target_identifi).append("<li> <b>Es Transitiva:</b> "+ boolTransitiva+"</li>");
         $(target_identifi).append("<li> <b>¿Contiene un ciclo?:</b> "+ boolCiclo+"</li>");
         $(target_identifi).append("<li> <b>¿Está conectado?:</b> "+ boolConectado+"</li>");
-        },5000);
-
 
 
 
@@ -755,10 +875,40 @@ $(document).ready(function(){
 
 
         //Notacion
-        setTimeout(function() {
+
         $("#idNotacion").html("");
         $("#idNotacion").html(relacion.getNotacionConjuntos());
 
+
+
+        /*  NEW CODE */
+
+        var myVector = Array.vector(cant_elementos);
+        var my2Darray = Array.matrix(cant_elementos,cant_elementos);
+
+        //Matriz booleana
+        printmatrix(my2Darray,"idMatriz");
+
+        // Grafico
+        var DotNetwork = generateDotNetwork(my2Darray, myVector);
+        var DOTstring = DotNetwork;
+        var parsedData = vis.network.convertDot(DOTstring);
+
+        // create a network
+        var container = document.getElementById('idDigrafo');
+        var data = {
+          nodes: parsedData.nodes,
+          edges: parsedData.edges
+        };
+        var options = {
+          autoResize: true,
+          height: '100%',
+          width: '100%',
+        };
+        var network = new vis.Network(container, data, options);
+
+
+        /*  END NEW CODE */
 
         //Antisimetricas
         $("#idAntisimetricas").html("");
@@ -783,7 +933,7 @@ $(document).ready(function(){
 
         });
 
-        },5000);
+      }, 1000); // Del setTimeout
 
       }
     );
